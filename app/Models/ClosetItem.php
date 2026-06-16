@@ -15,6 +15,7 @@ class ClosetItem extends Model
     protected $fillable = [
         'character_id',
         'image',
+        'description',
         'created_at',
         'updated_at'
     ];

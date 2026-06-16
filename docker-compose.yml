@@ -1,0 +1,48 @@
+services:
+  # Contenedor de la Aplicación (PHP-FPM)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel-app:latest
+    container_name: laravel-app
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - laravel-network
+
+  # Servidor Web (Nginx)
+  webserver:
+    image: nginx:alpine
+    container_name: laravel-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker-compose/nginx:/etc/nginx/conf.d
+    networks:
+      - laravel-network
+    depends_on:
+      - app
+
+  # Worker de Laravel (Manejo de Colas)
+  queue-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-queue-worker
+    restart: unless-stopped
+    command: php artisan queue:work --verbose --tries=3 --timeout=90
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - laravel-network
+    depends_on:
+      - app
+
+networks:
+  laravel-network:
+    driver: bridge

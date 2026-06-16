@@ -18,7 +18,6 @@ class Character extends Model
         'age',
         'birthday',
         'height',
-        'species',
         'occupation',
         'image',
         'sexual_orientation',
@@ -27,6 +26,13 @@ class Character extends Model
         'spotify_playlist'
     ];
 
+
+    // Relación: Un personaje puede tener muchas especies.
+    public function species(): BelongsToMany
+    {
+        // 'character_species_pivot' será el nombre de tu tabla intermedia
+        return $this->belongsToMany(CharacterSpecies::class, 'character_species_pivot');
+    }
     
     // Method to get all clients
     public static function getAllCharacters()

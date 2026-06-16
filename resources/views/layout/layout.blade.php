@@ -14,6 +14,7 @@
             <a href="{{ url('/') }}"> ▸ Home</a>
             <a href="{{ url('characters') }}"> ▸ Characters</a>
             <a href="{{ url('relationships') }}"> ▸ Relationships</a>
+            <a href="{{ route('character_species.index') }}">App Configuration</a>
         </div>
     </div>
 

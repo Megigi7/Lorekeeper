@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('character_1'); // fk Character
             $table->unsignedBigInteger('character_2'); // fk Character
-            $table->string('relationship_type');
+            $table->unsignedBigInteger('relationship_type_id'); // fk RelationshipType
             $table->string('spotify_playlist')->nullable();
             $table->foreign('character_1')->references('id')->on('character')->onDelete('cascade');
             $table->foreign('character_2')->references('id')->on('character')->onDelete('cascade');
+            $table->foreign('relationship_type_id')->references('id')->on('relationship_types')->onDelete('cascade');
 
             $table->timestamps();
         });

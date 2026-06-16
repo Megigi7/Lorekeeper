@@ -37,7 +37,25 @@ class HouseItemController extends Controller
 
     /* Remove the specified resource from storage. */
     public function destroy(string $id){
-        $characterId = HouseItem::getHouseItemById($id)->character_id;
+        $house_item = HouseItem::find($id);
+
+        if (!$house_item) {
+            return redirect()->back()->with('error', 'House item not found.');
+        }
+
+        $characterId = $house_item->character_id;
+
+        $filename = $house_item->image;
+
+        if ($filename) {
+            $fullPath = 'characters/house/' . $filename;
+
+            // Comprobamos si el archivo realmente existe en /public/storage/characters/house/
+            if (Storage::disk('public')->exists($fullPath)) {
+                Storage::disk('public')->delete($fullPath);
+            }
+        }
+        
         //después de confirmación, se elimina la tarea especificada
         $house_item = HouseItem::deleteHouseItem($id);
         if ($house_item) {

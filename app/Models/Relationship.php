@@ -15,7 +15,7 @@ class Relationship extends Model
     protected $fillable = [
         'character_1', // fk Character
         'character_2', // fk Character
-        'relationship_type',
+        'relationship_type_id',
         'spotify_playlist',
     ];
     

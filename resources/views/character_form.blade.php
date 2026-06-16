@@ -74,16 +74,37 @@
 
         <!-- Select -->
         <p><b>Species</b> |
-        <select name="species">
-            @foreach($species as $specie)
-                <option value="{{ $specie }}" 
-                @if(($type=='new' && old('species')==$specie) || ($type!='new' && $character->species==$specie)) selected @endif>
-                {{ $specie }}
-                </option>
-            @endforeach
-        </select>
-        </p>
+        <div id="species-container">
+            <label>Especies del Personaje:</label>
 
+            @if($type == 'new' || $character->species->isEmpty())
+                <div class="species-group mb-2 d-flex align-items-center">
+                    <select name="species[]" class="form-control">
+                        @foreach($species as $specie)
+                            <option value="{{ $specie->id }}" {{ in_array($specie->id, old('species', [])) ? 'selected' : '' }}>
+                                {{ $specie->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="button" class="btn btn-danger btn-sm ms-2 remove-species-btn" style="display:none;">X</button>
+                </div>
+            @else
+                @foreach($character->species as $characterSpecie)
+                    <div class="species-group mb-2 d-flex align-items-center">
+                        <select name="species[]" class="form-control">
+                            @foreach($species as $specie)
+                                <option value="{{ $specie->id }}" {{ $specie->id == $characterSpecie->id ? 'selected' : '' }}>
+                                    {{ $specie->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <button type="button" class="btn btn-danger btn-sm ms-2 remove-species-btn">X</button>
+                    </div>
+                @endforeach
+            @endif
+        </div>
+
+        <button type="button" id="add-species-btn" class="btn btn-secondary btn-sm mt-2">+ Añadir Especie</button>
 
 
         <p><b>Occupation</b> |
@@ -165,7 +186,42 @@
             age--;
         }
         document.getElementById('age').value = age;
+    }
+
+    document.getElementById('add-species-btn').addEventListener('click', function() {
+        const container = document.getElementById('species-container');
+        
+        // Obtenemos el primer grupo de especie para clonarlo
+        const firstGroup = container.querySelector('.species-group');
+        const newGroup = firstGroup.cloneNode(true);
+        
+        // Limpiamos la selección del nuevo clon (para que no herede el "selected" del primero)
+        const select = newGroup.querySelector('select');
+        select.selectedIndex = 0;
+        
+        // Nos aseguramos de que el botón "X" de borrado sea visible en el nuevo clon
+        const removeBtn = newGroup.querySelector('.remove-species-btn');
+        removeBtn.style.display = 'block';
+        
+        // Añadimos el nuevo grupo al contenedor
+        container.appendChild(newGroup);
+    });
+
+    // Lógica para que el botón "X" elimine su fila correspondiente
+    document.getElementById('species-container').addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-species-btn')) {
+            const groups = document.querySelectorAll('.species-group');
+            // Evitamos que el usuario borre el último selector que queda vivo
+            if (groups.length > 1) {
+                e.target.closest('.species-group').remove();
+            } else {
+                alert('Character must have at least one species.');
+            }
         }
+    });
+
+
+
 </script>
 
 

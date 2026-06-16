@@ -35,7 +35,23 @@ class ClosetItemController extends Controller
 
     /* Remove the specified resource from storage. */
     public function destroy(string $id){
-        $characterId = ClosetItem::getClosetItemById($id)->character_id;
+        $closet_item = ClosetItem::find($id);
+        if (!$closet_item) {
+            return redirect()->back()->with('error', 'Closet item not found.');
+        }
+        $characterId = $closet_item->character_id;
+
+        $filename = $closet_item->image;
+
+        if ($filename) {
+            $fullPath = 'characters/closet/' . $filename;
+
+            // Comprobamos si el archivo realmente existe en /public/storage/characters/closet/
+            if (Storage::disk('public')->exists($fullPath)) {
+                Storage::disk('public')->delete($fullPath);
+            }
+        }
+        
         //después de confirmación, se elimina la tarea especificada
         $closet_item = ClosetItem::deleteClosetItem($id);
         if ($closet_item) {

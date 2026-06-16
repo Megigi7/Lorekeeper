@@ -6,6 +6,10 @@ use App\Http\Controllers\GalleryItemController;
 use App\Http\Controllers\ClosetItemController;
 use App\Http\Controllers\HouseItemController;
 use App\Http\Controllers\RelationshipController;
+use App\Http\Controllers\RelationshipGalleryItemController;
+use App\Http\Controllers\CharacterSpeciesController;
+use App\Http\Controllers\AppConfigurationController;
+use App\Http\Controllers\RelationshipTypeController;
 
 Route::get('/', function () { return view('welcome'); })->name('welcome');
 
@@ -25,14 +29,30 @@ Route::post('/characters/{id}/update', [CharacterController::class, 'update'])->
 // Eliminar un personaje
 Route::delete('/characters/{id}/delete', [CharacterController::class, 'destroy'])->name('characters.destroy');
 
+// App Configuration (Character Species y Relationship Types) routes ------------------------------
+// Listado de especies
+Route::get('/app-configuration', [AppConfigurationController::class, 'index'])->name('app_configuration.index');
+// Almacenar una nueva especie
+Route::post('/app-configuration/species/store', [CharacterSpeciesController::class, 'store'])->name('character_species.store');
+// Borrar una especie
+Route::delete('/app-configuration/species/{id}/delete', [CharacterSpeciesController::class, 'destroy'])->name('character_species.destroy');
+// Almacenar un nuevo tipo de relación
+Route::post('/app-configuration/relationships/store', [RelationshipTypeController::class, 'store'])->name('relationship_types.store');
+// Borrar un tipo de relación
+Route::delete('/app-configuration/relationships/{id}/delete', [RelationshipTypeController::class, 'destroy'])->name('relationship_types.destroy');
+
+
 // Gallery routes ------------------------------
 // Listado de items de galería de un personaje
 Route::get('/characters/{id}/gallery', [GalleryItemController::class, 'index'])->name('gallery.index') ; //index;
 // Guardar un nuevo item de galería
 Route::post('/characters/{id}/gallery/store', [GalleryItemController::class, 'store'])->name('gallery.store');
+// Comprobar si una imagen tiene metadatos EXIF (AJAX) para fecha
+Route::post('/gallery/check-exif', [GalleryItemController::class, 'checkExif'])->name('gallery.checkExif');
+// Editar la fecha de un item de galería (solo la fecha, no la imagen ni el tipo)
+Route::patch('/gallery/{id}/date', [GalleryItemController::class, 'updateDate'])->name('gallery.updateDate');
 // Eliminar un item de galería
 Route::delete('/gallery/{id}/delete', [GalleryItemController::class, 'destroy'])->name('gallery.destroy');  
-
 
 // Closet routes ------------------------------
 // Listado de items de galería de un personaje

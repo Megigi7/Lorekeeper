@@ -22,8 +22,8 @@
 
     <p><strong>Name:</strong> {{ $character->name }}</p>
     <p><strong>Age:</strong> {{ $character->age }}</p>
-    <p><strong>Birthday:</strong> {{ $character->birthday }} 
-</p>
+    <p><strong>Birthday:</strong> {{ $character->birthday }} </p>
+    <p><strong>Gender:</strong> {{ $character->gender }}</p>
     <p><strong>Height:</strong> {{ $character->height }} cm </p> 
     <p><strong>Species:</strong> {{ $character->species }}</p>
     <p><strong>Occupation:</strong> {{ $character->occupation }}</p>

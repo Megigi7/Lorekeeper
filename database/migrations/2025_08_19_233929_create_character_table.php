@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('age')->nullable();
             $table->date('birthday')->nullable();
             $table->float('height')->nullable();
-            $table->string('species')->nullable();
             $table->string('occupation')->nullable();
             $table->string('image')->nullable();
             $table->string('sexual_orientation')->nullable();

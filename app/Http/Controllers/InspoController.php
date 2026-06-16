@@ -36,7 +36,25 @@ class InspoController extends Controller
 
     /* Remove the specified resource from storage. */
     public function destroy(string $id){
-        $characterId = Inspo::getInspoById($id)->character_id;
+        $inspo_item = Inspo::find($id);
+
+        if (!$inspo_item) {
+            return redirect()->back()->with('error', 'Character inspo not found.');
+        }
+
+        $characterId = $inspo_item->character_id;
+
+        $filename = $inspo_item->image;
+
+        if ($filename) {
+            $fullPath = 'characters/inspo/' . $filename;
+
+            // Comprobamos si el archivo realmente existe en /public/storage/characters/inspo/
+            if (Storage::disk('public')->exists($fullPath)) {
+                Storage::disk('public')->delete($fullPath);
+            }
+        }
+
         //después de confirmación, se elimina la tarea especificada
         $inspo = Inspo::deleteInspo($id);
         if ($inspo) {
