@@ -1,10 +1,6 @@
 # PARA LEVANTAR
 # docker compose up -d --build
 
-# Por si da error de read only o permision denied, ejecutar:
-# docker compose exec app chown -R www-data:www-data /var/www/html/database
-
-
 # ==========================================
 # STAGE 1: Dependencias de PHP (Composer)
 # ==========================================
@@ -25,13 +21,13 @@ RUN npm ci && npm run build
 
 
 # ==========================================
-# STAGE 3: Aplicación Final (Modificado para SQLite)
+# STAGE 3: Aplicación Final (Modificado para MySQL) 🌟
 # ==========================================
 FROM php:8.3-fpm-alpine
 
 WORKDIR /var/www/html
 
-# Instalar dependencias del sistema y pdo_sqlite
+# Instalar dependencias del sistema y pdo_mysql
 RUN apk add --no-cache \
     libpng-dev \
     libjpeg-turbo-dev \
@@ -41,20 +37,18 @@ RUN apk add --no-cache \
     unzip \
     git \
     bash \
-    sqlite-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    # 🌟 NUEVO: Añadida la extensión 'exif' al final de la lista de instalación de PHP
-    && docker-php-ext-install pdo_sqlite gd zip bcmath pcntl exif
+    # 🌟 CAMBIO: Se elimina 'pdo_sqlite' y se añade 'pdo_mysql'
+    && docker-php-ext-install pdo_mysql gd zip bcmath pcntl exif
+
 COPY . .
 COPY --from=vendor /app/vendor/ ./vendor/
 COPY --from=frontend /app/public/build/ ./public/build/
 
-# Asegurar que el archivo sqlite exista si no está creado (para producción)
-RUN mkdir -p database && touch database/database.sqlite
-
-# ¡CRUCIAL PARA SQLITE! Permisos en storage, bootstrap/cache Y la carpeta database
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+# 🌟 CAMBIO: Ya no creamos el archivo database.sqlite ni tocamos permisos de la carpeta database
+# ¡CRUCIAL PARA LARAVEL! Permisos en storage y bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 9000
 CMD ["php-fpm"]

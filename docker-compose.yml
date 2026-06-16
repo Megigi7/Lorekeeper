@@ -1,4 +1,22 @@
 services:
+  # Base de Datos (MySQL)
+  mysql-db:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}      # Docker busca esto en tu .env
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD} 
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - laravel-network
+
   # Contenedor de la Aplicación (PHP-FPM)
   app:
     build:
@@ -12,6 +30,8 @@ services:
       - ./:/var/www/html
     networks:
       - laravel-network
+    depends_on:
+      - mysql-db # Espera a que la BBDD esté lista
 
   # Servidor Web (Nginx)
   webserver:
@@ -42,7 +62,14 @@ services:
       - laravel-network
     depends_on:
       - app
+      - mysql-db # Espera a la app y a la BBDD
 
+# Redes para comunicar los contenedores entre sí
 networks:
   laravel-network:
     driver: bridge
+
+# Volumen persistente para que no se borre la bbdd
+volumes:
+  mysql-data:
+    driver: local
