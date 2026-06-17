@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('gallery_item', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('character_id');
-            $table->string('type'); // Nuevo campo para el tipo de imagen
+            $table->foreignId('character_id')
+                  ->constrained('character')
+                  ->onDelete('cascade');
+                
+            $table->string('type'); 
             $table->string('image')->nullable();
             $table->timestamps();
-
-            $table->foreign('character_id')
-                ->references('id')->on('character')
-                ->onDelete('cascade');
         });
     }
 

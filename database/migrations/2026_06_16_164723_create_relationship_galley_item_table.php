@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('relationship_gallery_item', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('relationship_id');
-            $table->string('image'); // Ruta de la imagen
-            $table->string('type'); // Nuevo campo para el tipo de imagen
-            $table->foreign('relationship_id')->references('id')->on('relationship')->onDelete('cascade');
+            
+            // 🌟 Optimizado al estilo moderno de Laravel
+            $table->foreignId('relationship_id')
+                ->constrained('relationship')
+                ->onDelete('cascade');
 
+            $table->string('image'); 
+            $table->string('type'); 
             $table->timestamps();
         });
     }

@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('character_inspo', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('character_id'); // Foreign key to characters table
-            $table->string('image'); // Path to the image file
-            $table->string('character_name'); // Name of the character in the inspo
-            $table->string('media'); // Media where the character is from
-            $table->foreign('character_id')->references('id')->on('character')->onDelete('cascade');
+            
+            $table->foreignId('character_id')
+                  ->constrained('character')
+                  ->onDelete('cascade');
 
+            $table->string('image'); 
+            $table->string('character_name'); 
+            $table->string('media'); 
             $table->timestamps();
         });
     }

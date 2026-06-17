@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('gender')->nullable();
             $table->integer('age')->nullable();
             $table->date('birthday')->nullable();
-            $table->float('height')->nullable();
+            $table->decimal('height', 4, 2)->nullable();
             $table->string('occupation')->nullable();
             $table->string('image')->nullable();
             $table->string('sexual_orientation')->nullable();
