@@ -7,7 +7,13 @@
 FROM composer:2.7 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --ignore-platform-reqs --no-interaction --no-plugins --no-scripts --no-dev --prefer-dist
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
+    --ignore-platform-reqs \
+    --no-interaction \
+    --no-plugins \
+    --no-scripts \
+    --prefer-dist \
+    --no-cache
 
 
 # ==========================================

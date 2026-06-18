@@ -28,6 +28,7 @@ services:
     tty: true
     volumes:
       - ./:/var/www/html
+      - /var/www/html/vendor
     networks:
       - laravel-network
     depends_on:
@@ -58,6 +59,7 @@ services:
     command: php artisan queue:work --verbose --tries=3 --timeout=90
     volumes:
       - ./:/var/www/html
+      - /var/www/html/vendor
     networks:
       - laravel-network
     depends_on:
