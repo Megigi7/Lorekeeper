@@ -25,6 +25,22 @@ class CharacterSpeciesController extends Controller
         return redirect()->route('app_configuration.index')->with('success', 'Species created successfully.');
     }
 
+    public function update(Request $request,$id)
+    {
+        $species = CharacterSpecies::findOrFail($id);
+        
+        $data =$request->validate([
+            'name' => 'required|unique:character_species,name,' . $id
+        ], [
+            'name.required' => 'Species name cannot be empty.',
+            'name.unique' => 'Species already exists.'
+        ]);
+
+        $species->update($data);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Species updated successfully.');
+    }
+
     public function destroy(Request $request, $id)
     {
         $species = CharacterSpecies::findOrFail($id);
@@ -43,7 +59,7 @@ class CharacterSpeciesController extends Controller
 
         try {
             $species->delete(); 
-            return redirect()->route('app_configuration.index')->with('success', 'Species deleted. The affected characters are now Humans.');
+            return redirect()->route('admin.dashboard')->with('success', 'Species deleted. The affected characters are now Humans.');
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

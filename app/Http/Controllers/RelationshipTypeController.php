@@ -26,6 +26,23 @@ class RelationshipTypeController extends Controller
         return redirect()->route('app_configuration.index')->with('success', 'Relationship type created successfully.');
     }
 
+    public function update(Request $request,$id)
+    {
+        $type = RelationshipType::findOrFail($id);
+
+        $data =$request->validate([
+            'name' => 'required|unique:relationship_types,name,' . $id
+        ], [
+            'name.required' => 'Relationship type name cannot be empty.',
+            'name.unique' => 'This relationship type already exists.'
+        ]);
+
+        $type->update($data);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Relationship type updated successfully.');
+    }
+
+
     /**
      * Eliminar un tipo de relación con control de alertas de seguridad
      */
@@ -63,7 +80,7 @@ class RelationshipTypeController extends Controller
         try {
             // Si no había relaciones o ya confirmó, borramos el tipo de relación
             $type->delete(); 
-            return redirect()->route('app_configuration.index')->with('success', 'Relationship type deleted successfully.');
+            return redirect()->route('admin.dashboard')->with('success', 'Relationship type deleted successfully.');
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

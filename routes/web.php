@@ -10,96 +10,103 @@ use App\Http\Controllers\RelationshipGalleryItemController;
 use App\Http\Controllers\CharacterSpeciesController;
 use App\Http\Controllers\AppConfigurationController;
 use App\Http\Controllers\RelationshipTypeController;
+use App\Http\Controllers\Auth\LoginController;
 
+// 1. PÁGINA DE INICIO (PÚBLICA)
 Route::get('/', function () { return view('welcome'); })->name('welcome');
 
-// Character routes ------------------------------
-// Listado de personajes
-Route::resource('/characters', CharacterController::class);
-// Crear un nuevo personaje
-Route::get('/characters/create', [CharacterController::class, 'create'])->name('characters.create');
-// Almacenar un nuevo personaje
-Route::post('/characters/store', [CharacterController::class, 'store'])->name('characters.store');
-// Obtener un personaje por ID
+// 2. RUTAS PÚBLICAS (Solo lectura para visitantes) ------------------------------
+
+// Personajes (Público - ¡Aquí mantenemos tu listado!)
+Route::get('/characters', [CharacterController::class, 'index'])->name('characters.index');
 Route::get('/characters/{id}', [CharacterController::class, 'show'])->name('characters.show');
-// Editar un personaje
-Route::get('/characters/{id}/edit', [CharacterController::class, 'edit'])->name('characters.edit');
-// Guardar cambios de un personaje
-Route::post('/characters/{id}/update', [CharacterController::class, 'update'])->name('characters.update');
-// Eliminar un personaje
-Route::delete('/characters/{id}/delete', [CharacterController::class, 'destroy'])->name('characters.destroy');
 
-// App Configuration (Character Species y Relationship Types) routes ------------------------------
-// Listado de especies
-Route::get('/app-configuration', [AppConfigurationController::class, 'index'])->name('app_configuration.index');
-// Almacenar una nueva especie
-Route::post('/app-configuration/species/store', [CharacterSpeciesController::class, 'store'])->name('character_species.store');
-// Borrar una especie
-Route::delete('/app-configuration/species/{id}/delete', [CharacterSpeciesController::class, 'destroy'])->name('character_species.destroy');
-// Almacenar un nuevo tipo de relación
-Route::post('/app-configuration/relationships/store', [RelationshipTypeController::class, 'store'])->name('relationship_types.store');
-// Borrar un tipo de relación
-Route::delete('/app-configuration/relationships/{id}/delete', [RelationshipTypeController::class, 'destroy'])->name('relationship_types.destroy');
+// Armario / Closet (Público)
+Route::get('/closet', [ClosetItemController::class, 'index'])->name('closet.index');
+Route::get('/closet/{id}', [ClosetItemController::class, 'show'])->name('closet.show');
 
+// Casas (Público)
+Route::get('/house', [HouseItemController::class, 'index'])->name('house.index');
+Route::get('/house/{id}', [HouseItemController::class, 'show'])->name('house.show');
 
-// Gallery routes ------------------------------
-// Listado de items de galería de un personaje
-Route::get('/characters/{id}/gallery', [GalleryItemController::class, 'index'])->name('gallery.index') ; //index;
-// Guardar un nuevo item de galería
-Route::post('/characters/{id}/gallery/store', [GalleryItemController::class, 'store'])->name('gallery.store');
-// Comprobar si una imagen tiene metadatos EXIF (AJAX) para fecha
-Route::post('/gallery/check-exif', [GalleryItemController::class, 'checkExif'])->name('gallery.checkExif');
-// Editar la fecha de un item de galería (solo la fecha, no la imagen ni el tipo)
-Route::patch('/gallery/{id}/date', [GalleryItemController::class, 'updateDate'])->name('gallery.updateDate');
-// Eliminar un item de galería
-Route::delete('/gallery/{id}/delete', [GalleryItemController::class, 'destroy'])->name('gallery.destroy');  
+// Inspo (Público)
+Route::get('/characters/{id}/inspo', [App\Http\Controllers\InspoController::class, 'index'])->name('inspo.index');
 
-// Closet routes ------------------------------
-// Listado de items de galería de un personaje
-Route::get('/characters/{id}/closet', [ClosetItemController::class, 'index'])->name('closet.index') ; //index;
-// Guardar un nuevo item de galería
-Route::post('/characters/{id}/closet/store', [ClosetItemController::class, 'store'])->name('closet.store');
-// Eliminar un item de galería
-Route::delete('/closet/{id}/delete', [ClosetItemController::class, 'destroy'])->name('closet.destroy');  
-
-// House routes ------------------------------
-// Listado de items de galería de un personaje
-Route::get('/characters/{id}/house', [HouseItemController::class, 'index'])->name('house.index') ; //index;
-// Guardar un nuevo item de galería
-Route::post('/characters/{id}/house/store', [HouseItemController::class, 'store'])->name('house.store');
-// Eliminar un item de galería
-Route::delete('/house/{id}/delete', [HouseItemController::class, 'destroy'])->name('house.destroy');  
-
-// Inspo routes ------------------------------
-// Listado de items de galería de un personaje
-Route::get('/characters/{id}/inspo', [App\Http\Controllers\InspoController::class, 'index'])->name('inspo.index') ; //index;
-// Guardar un nuevo item de galería
-Route::post('/characters/{id}/inspo/store', [App\Http\Controllers\InspoController::class, 'store'])->name('inspo.store');
-// Eliminar un item de galería
-Route::delete('/inspo/{id}/delete', [App\Http\Controllers\InspoController::class, 'destroy'])->name('inspo.destroy');
+// Relaciones (Público)
+Route::get('/relationships', [RelationshipController::class, 'index'])->name('relationships.index');
+Route::get('/relationships/{id}', [RelationshipController::class, 'show'])->name('relationships.show');
+Route::get('character/{characterId}/relationships', [RelationshipController::class, 'showByCharacter'])->name('relationships.showByCharacter');
+Route::get('/relationships/{id}/gallery', [RelationshipGalleryItemController::class, 'index'])->name('relationship_gallery.index');
 
 
+// 3. LA PUERTA SECRETA DE LOG IN (Silly wiwi portal) ---------------------
+Route::get('/silly-wiwi-portal', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/silly-wiwi-portal', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Relationship routes ------------------------------
-// Listado de relaciones
-Route::get('/relationships', [App\Http\Controllers\RelationshipController::class, 'index'])->name('relationships.index');
-// Crear una nueva relación
-Route::get('/relationships/create', [App\Http\Controllers\RelationshipController::class, 'create'])->name('relationships.create');
-// Almacenar una nueva relación
-Route::post('/relationships/store', [App\Http\Controllers\RelationshipController::class, 'store'])->name('relationships.store');
-// Obtener una relación por ID 
-Route::get('/relationships/{id}', [App\Http\Controllers\RelationshipController::class, 'show'])->name('relationships.show');
-// Obtener relaciones por ID de personaje
-Route::get('character/{characterId}/relationships', [App\Http\Controllers\RelationshipController::class, 'showByCharacter'])->name('relationships.showByCharacter');
-// Editar una relación
-Route::get('/relationships/{id}/edit', [App\Http\Controllers\RelationshipController::class, 'edit'])->name('relationships.edit');
-// Guardar cambios de una relación
-Route::post('/relationships/{id}/update', [App\Http\Controllers\RelationshipController::class, 'update'])->name('relationships.update');
-// Eliminar una relación
-Route::delete('/relationships/{id}/delete', [App\Http\Controllers\RelationshipController::class, 'destroy'])->name('relationships.destroy'); 
-// Listado de items de galería de una relación
-Route::get('/relationships/{id}/gallery', [App\Http\Controllers\RelationshipGalleryItemController::class, 'index'])->name('relationship_gallery.index') ; //index;
-// Guardar un nuevo item de galería de una relación
-Route::post('/relationships/{id}/gallery/store', [App\Http\Controllers\RelationshipGalleryItemController::class, 'store'])->name('relationship_gallery.store');
-// Eliminar un item de galería de una relación
-Route::delete('/relationship_gallery/{id}/delete', [App\Http\Controllers\RelationshipGalleryItemController::class, 'destroy'])->name('relationship_gallery.destroy');
+
+// 4. EL PANEL DE CONTROL /ADMIN (Backend 100% Protegido) -----------------------
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/admin', function () {
+    return view('admin.dashboard', [
+        'characters' => \App\Models\Character::getAllCharacters(),
+        'relationships' => \App\Models\Relationship::all(), // Reemplaza por tu método si tienes un getAll
+        'species' => \App\Models\CharacterSpecies::all(),
+        'relationship_types' => \App\Models\RelationshipType::orderBy('name')->get(),
+        
+        // Datos necesarios para los formularios de creación rápidos del modal
+        'sexualities' => ['Straight', 'Gay', 'Lesbian', 'Bisexual'],
+        'personalities' => [
+            'INTJ', 'INTP', 'ENTJ', 'ENTP',
+            'INFJ', 'INFP', 'ENFJ', 'ENFP',
+            'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
+            'ISTP', 'ISFP', 'ESTP', 'ESFP'
+        ]
+    ]);
+    })->middleware('auth')->name('admin.dashboard');
+
+    // Configuración General (La vista app_configuration)
+    Route::get('/admin/configuration', [AppConfigurationController::class, 'index'])->name('app_configuration.index');
+    Route::post('/admin/character_species/store', [CharacterSpeciesController::class, 'store'])->name('character_species.store');
+    Route::post('/admin/character_species/{id}/update', [CharacterSpeciesController::class, 'update'])->name('character_species.update');
+    Route::delete('/admin/character_species/{id}/delete', [CharacterSpeciesController::class, 'destroy'])->name('character_species.destroy');
+    Route::post('/admin/relationship_types/store', [RelationshipTypeController::class, 'store'])->name('relationship_types.store');
+    Route::post('/admin/relationship_types/{id}/update', [RelationshipTypeController::class, 'update'])->name('relationship_types.update');
+    Route::delete('/admin/relationship_types/{id}/delete', [RelationshipTypeController::class, 'destroy'])->name('relationship_types.destroy');
+
+    // Gestión de Personajes (Escribir/Editar/Borrar)
+    Route::get('/admin/characters/create', [CharacterController::class, 'create'])->name('characters.create');
+    Route::post('/admin/characters/store', [CharacterController::class, 'store'])->name('characters.store');
+    Route::get('/admin/characters/{id}/edit', [CharacterController::class, 'edit'])->name('characters.edit');
+    Route::post('/admin/characters/{id}/update', [CharacterController::class, 'update'])->name('characters.update');
+    Route::delete('/admin/characters/{id}/delete', [CharacterController::class, 'destroy'])->name('characters.destroy');
+
+    // Gestión de Galería de Personajes (Escribir/Borrar/Editar fecha)
+    Route::post('/admin/gallery/store', [GalleryItemController::class, 'store'])->name('gallery.store');
+    Route::post('/admin/gallery/check-exif', [GalleryItemController::class, 'checkExif'])->name('gallery.checkExif');
+    Route::patch('/admin/gallery/{id}/date', [GalleryItemController::class, 'updateDate'])->name('gallery.updateDate');
+    Route::delete('/admin/gallery/{id}/delete', [GalleryItemController::class, 'destroy'])->name('gallery.destroy');
+
+    // Gestión de Armario / Closet (Escribir/Borrar)
+    Route::post('/admin/closet/store', [ClosetItemController::class, 'store'])->name('closet.store');
+    Route::delete('/admin/closet/{id}/delete', [ClosetItemController::class, 'destroy'])->name('closet.destroy');
+
+    // Gestión de Casas (Escribir/Borrar)
+    Route::post('/admin/house/store', [HouseItemController::class, 'store'])->name('house.store');
+    Route::delete('/admin/house/{id}/delete', [HouseItemController::class, 'destroy'])->name('house.destroy');
+
+    // Gestión de Inspo (Escribir/Borrar)
+    Route::post('/admin/inspo/store', [App\Http\Controllers\InspoController::class, 'store'])->name('inspo.store');
+    Route::delete('/admin/inspo/{id}/delete', [App\Http\Controllers\InspoController::class, 'destroy'])->name('inspo.destroy');
+
+    // Gestión de Relaciones entre Personajes (Escribir/Editar/Borrar)
+    Route::get('/admin/relationships/create', [RelationshipController::class, 'create'])->name('relationships.create');
+    Route::post('/admin/relationships/store', [RelationshipController::class, 'store'])->name('relationships.store');
+    Route::get('/admin/relationships/{id}/edit', [RelationshipController::class, 'edit'])->name('relationships.edit');
+    Route::post('/admin/relationships/{id}/update', [RelationshipController::class, 'update'])->name('relationships.update');
+    Route::delete('/admin/relationships/{id}/delete', [RelationshipController::class, 'destroy'])->name('relationships.destroy');
+    Route::post('/admin/relationships/{id}/gallery/store', [RelationshipGalleryItemController::class, 'store'])->name('relationship_gallery.store');
+    Route::delete('/admin/relationship_gallery/{id}/delete', [RelationshipGalleryItemController::class, 'destroy'])->name('relationship_gallery.destroy');
+
+});

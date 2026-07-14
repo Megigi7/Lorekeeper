@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         // Llamamos a tu seeder de especies
         $this->call([
             CharacterSpeciesSeeder::class,
+            AdminUserSeeder::class
         ]);
     }
 }
